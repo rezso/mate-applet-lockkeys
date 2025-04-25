@@ -54,20 +54,6 @@ static void applet_reorder_icons(int size, int orient, LedApplet *applet) {
 	 * have been put there before...
 	 * they have to be ref'ed before doing so
 	 */
-#ifdef HAVE_GTK2
-	if (applet->num_pix->parent) {
-		g_object_ref(G_OBJECT(applet->num_pix));
-		gtk_container_remove(GTK_CONTAINER(applet->num_pix->parent), applet->num_pix);
-	}
-	if (applet->caps_pix->parent) {
-		g_object_ref(G_OBJECT(applet->caps_pix));
-		gtk_container_remove(GTK_CONTAINER(applet->caps_pix->parent), applet->caps_pix);
-	}
-	if (applet->scroll_pix->parent)	{
-		g_object_ref(G_OBJECT(applet->scroll_pix));
-		gtk_container_remove(GTK_CONTAINER(applet->scroll_pix->parent), applet->scroll_pix);
-	}
-#elif #HAVE_GTK3
 	if (gtk_widget_get_parent(applet->num_pix)) {
 		g_object_ref(G_OBJECT(applet->num_pix));
 		gtk_container_remove(GTK_CONTAINER(gtk_widget_get_parent(applet->num_pix)), applet->num_pix);
@@ -80,7 +66,6 @@ static void applet_reorder_icons(int size, int orient, LedApplet *applet) {
 		g_object_ref(G_OBJECT(applet->scroll_pix));
 		gtk_container_remove(GTK_CONTAINER(gtk_widget_get_parent(applet->scroll_pix)), applet->scroll_pix);
 	}
-#endif
 
 
 	/* Do we put the pixmaps into the vbox or the hbox?
@@ -189,11 +174,7 @@ static void about_cb (GtkAction *action, LedApplet *applet) {
 	snprintf(&image_file[0], 1023, "%s/%s", APPLET_ICON_PATH, "applet_streamer.48.png");
 	gtk_about_dialog_set_logo (GTK_ABOUT_DIALOG(about), gtk_image_get_pixbuf(GTK_IMAGE(gtk_image_new_from_file (image_file))));
 */
-#ifdef HAVE_GTK2
-	gtk_about_dialog_set_license (GTK_ABOUT_DIALOG(about), "GPL v. 2 or later");
-#elif HAVE_GTK3
 	gtk_about_dialog_set_license_type (GTK_ABOUT_DIALOG(about), GTK_LICENSE_GPL_2_0);
-#endif
 
 	gtk_dialog_run (GTK_DIALOG(about));
 	gtk_widget_destroy(about);
@@ -278,11 +259,7 @@ static void settings_cb (GtkAction *action, LedApplet *applet) {
 	applet->settings = 
 		GTK_DIALOG(gtk_dialog_new_with_buttons(_("Lock Keys Preferences"), 
 		NULL, 
-#ifdef HAVE_GTK2
-		GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_NO_SEPARATOR,
-#elif HAVE_GTK3
 		GTK_DIALOG_DESTROY_WITH_PARENT,
-#endif
 		GTK_STOCK_CLOSE, GTK_RESPONSE_ACCEPT, 
 		//GTK_STOCK_HELP, GTK_RESPONSE_HELP,
 		NULL));
@@ -290,11 +267,8 @@ static void settings_cb (GtkAction *action, LedApplet *applet) {
 	gtk_dialog_set_default_response(GTK_DIALOG(applet->settings), GTK_RESPONSE_ACCEPT);
 	gtk_window_set_resizable(GTK_WINDOW(applet->settings), FALSE);
 
-#ifdef HAVE_GTK2
-	vbox1 = gtk_vbox_new(FALSE, 6);
-#elif HAVE_GTK3
 	vbox1 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 6);
-#endif
+
 	gtk_container_set_border_width(GTK_CONTAINER(vbox1), 12);
 	
 	header_str = g_strconcat("<span weight=\"bold\">", _("Settings"), "</span>", NULL);
@@ -304,20 +278,13 @@ static void settings_cb (GtkAction *action, LedApplet *applet) {
 	g_free(header_str);
 	gtk_box_pack_start(GTK_BOX(vbox1), header_lbl, TRUE, TRUE, 0);
 	
-#ifdef HAVE_GTK2
-	hbox = gtk_hbox_new(FALSE, 0);
-#elif HAVE_GTK3
 	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-#endif
+
 	gtk_box_pack_start(GTK_BOX(vbox1), hbox, TRUE, TRUE, 0);
 	
 	dummy_lbl = gtk_label_new("    ");
 
-#ifdef HAVE_GTK2
-	vbox2 = gtk_vbox_new(FALSE, 6);
-#elif HAVE_GTK3
 	vbox2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 6);
-#endif
 
 	gtk_box_pack_start(GTK_BOX(hbox), dummy_lbl, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), vbox2, TRUE, TRUE, 0);
@@ -343,11 +310,8 @@ static void settings_cb (GtkAction *action, LedApplet *applet) {
 	gtk_box_pack_start(GTK_BOX(vbox2), applet->show_cb[SCROLLLOCK], TRUE, TRUE, 0);
 	
 	gtk_widget_show_all(vbox1);
-#ifdef HAVE_GTK2
-	gtk_container_add(GTK_CONTAINER(applet->settings->vbox), vbox1); 
-#elif HAVE_GTK3
+
 	gtk_container_add(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(applet->settings))), vbox1);
-#endif
 	
 	g_signal_connect(G_OBJECT(applet->show_cb[CAPSLOCK]), "toggled", G_CALLBACK(show_cb_change_cb), (gpointer)applet);
 	g_signal_connect(G_OBJECT(applet->show_cb[NUMLOCK]), "toggled", G_CALLBACK(show_cb_change_cb), (gpointer)applet);
@@ -514,12 +478,7 @@ static const GtkActionEntry applet_menu_actions [] = {
 	{ "About", GTK_STOCK_ABOUT, "_About", NULL, NULL, G_CALLBACK (about_cb) }
 };
 
-#ifdef HAVE_GTK2
-void applet_back_change (MatePanelApplet *a, MatePanelAppletBackgroundType type, GdkColor *color, GdkPixmap *pixmap, LedApplet *applet) {
-#elif HAVE_GTK3
 void applet_back_change (MatePanelApplet *a, MatePanelAppletBackgroundType type, GdkRGBA *color, cairo_pattern_t *pattern, LedApplet *applet) {
-#endif
-
 	// Use MATE-provided wrapper to change the background (same for both GTK2 and GTK3)
 	mate_panel_applet_set_background_widget (a, GTK_WIDGET(applet->applet));
 }
@@ -557,22 +516,10 @@ static gboolean led_applet_factory(MatePanelApplet *applet_widget, const gchar *
 	 * either 
 	 */
 
-#ifdef HAVE_GTK2
-	GdkDrawable *drawable = gdk_get_default_root_window();
-	g_assert(drawable);
-	applet->rootwin = gdk_x11_drawable_get_xdisplay(drawable);
-#elif HAVE_GTK3
 	GdkDisplay *gdk_display = gdk_display_get_default();
 	applet->rootwin = gdk_x11_display_get_xdisplay (gdk_display);
-#endif
-
-#ifdef HAVE_GTK2
-	applet->vbox = gtk_vbox_new(FALSE, 0);
-	applet->hbox = gtk_hbox_new(FALSE, 0);
-#elif HAVE_GTK3
 	applet->vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 	applet->hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-#endif
 
 	applet->num_pix = gtk_image_new();
 	applet->caps_pix = gtk_image_new();
