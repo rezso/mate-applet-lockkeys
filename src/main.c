@@ -171,7 +171,7 @@ static void about_cb (GtkAction *action, LedApplet *applet) {
 
 	gtk_about_dialog_set_copyright (GTK_ABOUT_DIALOG(about), "Copyleft ?-2016. See License for details.");
 
-	gchar *authors[3];
+	const gchar *authors[3];
 	authors[0] = "Joergen Scheibengruber <mfcn@gmx.de>";
 	authors[1] = "Assen Totin <assen.totin@gmail.com>";
 	authors[2] = NULL;
