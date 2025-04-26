@@ -32,8 +32,8 @@ glib_compile_schemas = glib-compile-schemas $(DESTDIR)$(datadir)/glib-2.0/schema
 install-data-local:
 	@-if test -z "$(DESTDIR)"; then \
 		echo "Compiling glib schemas."; \
-		$(gtk_update_icon_cache); \
+		$(glib_compile_schemas); \
 	else \
-		echo "*** Glib schemas not compiled. After install, run this:"; \
+		echo "*** Glib schema not compiled. After install, run this:"; \
 		echo "***   $(glib_compile_schemas)"; \
 	fi
