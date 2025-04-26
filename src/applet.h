@@ -49,9 +49,7 @@ typedef struct {
         gboolean show[3];
 
         GtkDialog *about, *settings;
-#ifdef HAVE_GSETTINGS
-	GSettings *gsettings;
-#endif
+    	GSettings *gsettings;
 } LedApplet;
 
 

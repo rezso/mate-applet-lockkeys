@@ -27,5 +27,13 @@ service_DATA = org.mate.panel.applet.LockkeysApplet.service
 gsettingsdir = $(datadir)/glib-2.0/schemas
 gsettings_DATA = org.mate.panel.applet.LockkeysApplet.gschema.xml
 
-install-data-hook:
-	glib-compile-schemas $(DESTDIR)$(datadir)/glib-2.0/schemas 2>/dev/null
+glib_compile_schemas = glib-compile-schemas $(DESTDIR)$(datadir)/glib-2.0/schemas 2>/dev/null
+
+install-data-local:
+	@-if test -z "$(DESTDIR)"; then \
+		echo "Compiling glib schemas."; \
+		$(gtk_update_icon_cache); \
+	else \
+		echo "*** Glib schemas not compiled. After install, run this:"; \
+		echo "***   $(glib_compile_schemas)"; \
+	fi

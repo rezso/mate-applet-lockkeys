@@ -57,29 +57,6 @@ if test $FOUND_MSGFMT = "no"; then
 	exit
 fi
 
-# glib-compile-schemas - for GSettings
-PRINT_SETTINGS_BACKEND="GConf"
-FORCE_SETTINGS="no"
-AC_CHECK_PROG([FOUND_GCS],[glib-compile-schemas],["yes"],["no"])
-AC_ARG_ENABLE([settings],[AS_HELP_STRING([--enable-settings],[settings backend to use, gsettings or gconf (default: check GSettings, if missing, use GConf))])],[FORCE_SETTINGS=$enableval])
-if test $FORCE_SETTINGS = "gsettings" ; then
-	if test $FOUND_GCS = "yes" ; then
-        	AC_DEFINE([HAVE_GSETTINGS],[1],[Define if we have GSettings])
-		PRINT_SETTINGS_BACKEND="GSettings"
-	else
-		AC_MSG_ERROR(["*** GSettings forced, but not found."])
-	fi
-elif test $FORCE_SETTINGS = "gconf" ; then
-	# Do nothing, this is the fall-back
-	EMPTY="1"
-else
-	if test $FOUND_GCS = "yes" ; then
-		AC_DEFINE([HAVE_GSETTINGS],[1],[Define if we have GSettings])
-		PRINT_SETTINGS_BACKEND="GSettings"
-	fi
-fi
-
-
 ### Checks for libraries.
 LIBMATEPANELAPPLET="no"
 PKG_CHECK_MODULES([LIBMATEPANELAPPLET_4], [libmatepanelapplet-4.0], [LIBMATEPANELAPPLET="libmatepanelapplet-4.0"])
@@ -117,8 +94,6 @@ AC_OUTPUT
 
 echo
 echo "Configuration complete."
-echo 
-echo "* Selected settings backend: $PRINT_SETTINGS_BACKEND"
 echo
 echo "Now, run make."
 echo 
