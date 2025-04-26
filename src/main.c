@@ -21,6 +21,7 @@
 
 #include <X11/XKBlib.h>
 #include <gdk/gdkx.h>
+#include <glib-object.h>
 #include <mate-panel-applet.h>
 #include <libintl.h>
 #include <string.h>
@@ -260,7 +261,7 @@ static void settings_cb (GtkAction *action, LedApplet *applet) {
 		GTK_DIALOG(gtk_dialog_new_with_buttons(_("Lock Keys Preferences"), 
 		NULL, 
 		GTK_DIALOG_DESTROY_WITH_PARENT,
-		GTK_STOCK_CLOSE, GTK_RESPONSE_ACCEPT, 
+		"_Close", GTK_RESPONSE_ACCEPT, 
 		//GTK_STOCK_HELP, GTK_RESPONSE_HELP,
 		NULL));
 
@@ -274,7 +275,8 @@ static void settings_cb (GtkAction *action, LedApplet *applet) {
 	header_str = g_strconcat("<span weight=\"bold\">", _("Settings"), "</span>", NULL);
 	header_lbl = gtk_label_new(header_str);
 	gtk_label_set_use_markup(GTK_LABEL(header_lbl), TRUE);
-	gtk_misc_set_alignment(GTK_MISC(header_lbl), 0, 0.5);
+	gtk_label_set_xalign(GTK_LABEL(header_lbl), 0.0f);
+	gtk_label_set_yalign(GTK_LABEL(header_lbl), 0.5f);
 	g_free(header_str);
 	gtk_box_pack_start(GTK_BOX(vbox1), header_lbl, TRUE, TRUE, 0);
 	
@@ -474,8 +476,8 @@ static gboolean init_xkb_extension(LedApplet *applet) {
 }
 
 static const GtkActionEntry applet_menu_actions [] = {
-	{ "Settings", GTK_STOCK_PROPERTIES, "_Settings", NULL, NULL, G_CALLBACK (settings_cb) },
-	{ "About", GTK_STOCK_ABOUT, "_About", NULL, NULL, G_CALLBACK (about_cb) }
+	{ "Settings", "_Properties", "_Settings", NULL, NULL, G_CALLBACK (settings_cb) },
+	{ "About", "_About", "_About", NULL, NULL, G_CALLBACK (about_cb) }
 };
 
 void applet_back_change (MatePanelApplet *a, MatePanelAppletBackgroundType type, GdkRGBA *color, cairo_pattern_t *pattern, LedApplet *applet) {
